@@ -9,7 +9,7 @@ export default async function handler(req, res) {
       return res.status(200).end();
     }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://api.openai-proxy.org/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
