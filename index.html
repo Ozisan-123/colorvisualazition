@@ -217,7 +217,7 @@ ${colorData}
     try{
         document.getElementById("aiSummary").innerText = "AI分析中...";
 
-        const res = await fetch("http://localhost:3000/api/ai",{
+        const res = await fetch("https://colorvisualazition-ozisan-123s-projects.vercel.app/api/ai",{
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
