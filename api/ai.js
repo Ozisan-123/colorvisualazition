@@ -1,15 +1,17 @@
 export default async function handler(req, res) {
+
+  // ✅ 必须最先设置 CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // ✅ 处理预检请求（关键）
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   try {
-    // 允许跨域（从 github.io 调用）
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-    if (req.method === "OPTIONS") {
-      return res.status(200).end();
-    }
-
-    const response = await fetch("https://api.openai-proxy.org/v1/chat/completions", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,6 +22,7 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // ❗ 防止返回异常结构
     if (data.error) {
       return res.status(500).json(data);
     }
@@ -27,7 +30,7 @@ export default async function handler(req, res) {
     res.status(200).json(data);
 
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: "AI失败" });
+    console.error("Server error:", e);
+    res.status(500).json({ error: "AI调用失败" });
   }
 }
