@@ -1,28 +1,34 @@
 export default async function handler(req, res) {
 
-  // ✅ 必须最先设置 CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  // ✅ 处理预检请求（关键）
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
   try {
+
+    // ✅ 强制保证参数完整
+    const body = {
+      model: req.body.model || "gpt-4o-mini",
+      messages: req.body.messages || [
+        { role: "user", content: "请分析颜色" }
+      ]
+    };
+
     const response = await fetch("https://api.openai-proxy.org/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.OPENAI_KEY}`
       },
-      body: JSON.stringify(req.body)
+      body: JSON.stringify(body)
     });
 
     const data = await response.json();
 
-    // ❗ 防止返回异常结构
     if (data.error) {
       return res.status(500).json(data);
     }
