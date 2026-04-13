@@ -229,7 +229,7 @@ ${colorData}
         });
 
         const data = await res.json();
-
+        console.log("AI返回:", data);
         const text = data.choices[0].message.content;
 
         document.getElementById("aiSummary").innerText = text;
